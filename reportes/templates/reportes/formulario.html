@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Reporte - Inventario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 mb-4 shadow">
+        <div class="container-fluid">
+            <span class="navbar-brand fw-bold">Sistema de Inventario</span>
+            <div class="d-flex align-items-center">
+                <span class="text-white me-3"><i class="bi bi-person-circle me-1"></i> Hola, <strong>{{ user.username }}</strong></span>
+                <form action="{% url 'logout' %}" method="post" class="m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Cerrar Sesión</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow border-0">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h4 class="mb-0 text-center">Reportar Falla de Equipo</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Edificio</label>
+                                    <input type="text" name="edificio" class="form-control" placeholder="Ej: Edificio A" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Número de Máquina</label>
+                                    <input type="text" name="no_maquina" class="form-control" placeholder="Ej: 41" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Ciclo Escolar</label>
+                                    <select name="ciclo" class="form-select" required>
+                                        <option value="" selected disabled>Seleccione Ciclo</option>
+                                        {% for c in ciclos %}
+                                            <option value="{{ c.pk }}">{{ c.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Grupo</label>
+                                    <input type="text" name="grupo" class="form-control" placeholder="602" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Turno</label>
+                                    <select name="turno" class="form-select" required>
+                                        <option value="Matutino">Matutino</option>
+                                        <option value="Vespertino">Vespertino</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Carrera</label>
+                                <input type="text" name="carrera" class="form-control" placeholder="Ingeniería en Sistemas" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold text-danger">Descripción de la Falla</label>
+                                <textarea name="falla_observacion" class="form-control" rows="4" placeholder="Detalla el problema (Ej: No enciende, pantalla azul...)" required></textarea>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg shadow-sm">Enviar Reporte</button>
+                                <a href="{% url 'lista_reportes' %}" class="btn btn-link text-secondary">Ver mis reportes anteriores</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

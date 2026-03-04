@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <title>Mis Reportes</title>
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 mb-4 shadow">
+        <div class="container-fluid">
+            <span class="navbar-brand fw-bold">Sistema de Inventario</span>
+            <div class="d-flex align-items-center">
+                <span class="text-white me-3"><i class="bi bi-person-circle me-1"></i> Hola, <strong>{{ user.username }}</strong></span>
+                <form action="{% url 'logout' %}" method="post" class="m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Cerrar Sesión</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-dark">Historial de Reportes</h2>
+            <a href="{% url 'crear_reporte' %}" class="btn btn-primary shadow-sm">+ Nuevo Reporte</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-white table-striped shadow-sm bg-white rounded overflow-hidden">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Máquina</th>
+                        <th>Falla</th>
+                        <th>Estatus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reportes %}
+                    <tr>
+                        <td>{{ r.fecha|date:"d/m/Y" }}</td>
+                        <td>{{ r.no_maquina }}</td>
+                        <td>{{ r.falla_observacion }}</td>
+                        <td>
+                            {% if r.estatus %}
+                            <span class="badge bg-success">Resuelto</span>
+                            {% else %}
+                            <span class="badge bg-warning text-dark">Pendiente</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">No has enviado reportes aún.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

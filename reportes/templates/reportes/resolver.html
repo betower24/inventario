@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Reparación - Inventario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7f6;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+        }
+        .card-header {
+            background: linear-gradient(45deg, #1d2b64, #f8cdda);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+            padding: 10px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .info-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .falla-box {
+            background-color: #fff3f3;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-header text-center">
+                    <h3 class="mb-0">Atención de Reporte</h3>
+                    <small>ID: {{ reporte.pk }}</small>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <p class="info-label">Edificio / Máquina</p>
+                            <p class="fw-bold">{{ reporte.edificio }} - Mzq: {{ reporte.no_maquina }}</p>
+                        </div>
+                        <div class="col-6 text-end">
+                            <p class="info-label">Fecha Reporte</p>
+                            <p class="fw-bold">{{ reporte.fecha|date:"d/m/Y" }}</p>
+                        </div>
+                    </div>
+
+                    <div class="falla-box">
+                        <p class="info-label text-danger">Falla Reportada</p>
+                        <p class="mb-0 italic">"{{ reporte.falla_observacion }}"</p>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Atención Prestada (Solución Técnica):</label>
+                            <textarea 
+                                name="solucion" 
+                                class="form-control" 
+                                rows="5" 
+                                placeholder="Describe las acciones realizadas para reparar el equipo..."
+                                required
+                            ></textarea>
+                            <div class="form-text text-muted">
+                                Esta información será visible para el docente que realizó el reporte.
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Guardar y Finalizar
+                            </button>
+                            <a href="{% url 'dashboard_admin' %}" class="btn btn-outline-secondary">
+                                Regresar al Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <p class="text-center mt-4 text-muted small">
+                Sistema de Inventario Escolar &copy; 2026
+            </p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
