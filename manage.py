@@ -26,3 +26,18 @@ from django.utils import asyncio
 import sys
 import six
 sys.modules['django.utils.six'] = six
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'inventario_escolar.settings')
+django.setup()
+
+from django.contrib.auth.models import User
+
+# Cambia estos datos por los que tú quieras
+username = 'admin_beto'
+email = 'admin@example.com'
+password = 'Password2026'
+
+if not User.objects.filter(username=username).exists():
+    User.objects.create_superuser(username, email, password)
+    print(f"Superusuario '{username}' creado con éxito.")
+else:
+    print(f"El usuario '{username}' ya existe.")
