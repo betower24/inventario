@@ -1,38 +1,14 @@
 import os
 import django
-import sys
-
-# Parche para la librería 'six' que pide Djongo
-try:
-    import six
-    sys.modules['django.utils.six'] = six
-except ImportError:
-    pass
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'inventario_escolar.settings')
 django.setup()
-
 from django.contrib.auth.models import User
-from django.utils import timezone
-
-username = 'admin'
-email = 'betower24@gmail.com'
-password = 'admin123'
 
 try:
-    if not User.objects.filter(username=username).exists():
-        user = User(
-            username=username,
-            email=email,
-            is_staff=True,
-            is_superuser=True,
-            is_active=True,
-            date_joined=timezone.now()
-        )
-        user.set_password(password)
-        user.save()
-        print(f"¡Éxito! Superusuario '{username}' creado.")
+    if not User.objects.filter(username='admin_beto').exists():
+        User.objects.create_superuser('admin_beto', 'admin@example.com', 'Password2026')
+        print("Superusuario creado.")
     else:
-        print(f"El usuario '{username}' ya existe.")
+        print("El usuario ya existe.")
 except Exception as e:
-    print(f"Error: {e}")
+    print(f"Error pero continuando: {e}")
