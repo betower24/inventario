@@ -15,9 +15,9 @@ django.setup()
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-username = 'admin_beto'
-email = 'admin@example.com'
-password = 'Password2026'
+username = 'admin'
+email = 'betower24@gmail.com'
+password = 'admin123'
 
 try:
     if not User.objects.filter(username=username).exists():
