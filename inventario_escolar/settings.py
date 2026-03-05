@@ -79,18 +79,25 @@ WSGI_APPLICATION = 'inventario_escolar.wsgi.application'
 # BASE DE DATOS (MongoDB Atlas)
 # ==============================
 
+MONGO_URI = os.environ.get('MONGO_URI')
+
+if not MONGO_URI:
+    # En desarrollo local, si no hay URI, podrías querer usar SQLite 
+    # o simplemente lanzar el error como ya lo haces:
+    raise Exception("La variable de entorno MONGO_URI no está definida")
+
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
+        'ENGINE': 'django_mongodb_backend', # <--- CAMBIADO DE djongo
         'NAME': 'inventario_escolar',
-        'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': os.environ.get('MONGO_URI')
-        }
+            'host': MONGO_URI,
+        },
     }
 }
 
-
+# Añade esto para evitar errores de validación de modelos con MongoDB
+SILENCED_SYSTEM_CHECKS = ["models.W042"]
 # ==============================
 # VALIDACIÓN DE PASSWORD
 # ==============================
