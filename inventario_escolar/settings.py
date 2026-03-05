@@ -150,4 +150,8 @@ LOGOUT_REDIRECT_URL = 'login'
 # CONFIGURACIÓN POR DEFECTO
 # ==============================
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# ==============================
+# CONFIGURACIÓN POR DEFECTO
+# ==============================
+
+DEFAULT_AUTO_FIELD = "django_mongodb_backend.fields.ObjectIdAutoField"
