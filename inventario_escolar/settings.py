@@ -4,6 +4,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
+# En settings.py
+LOGIN_URL = 'login'
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
