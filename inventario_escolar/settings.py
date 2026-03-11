@@ -1,36 +1,36 @@
 import os
+import dj_database_url
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ==============================
+# =====================================
 # SEGURIDAD
-# ==============================
+# =====================================
 
 SECRET_KEY = os.environ.get(
-    'SECRET_KEY',
-    'django-insecure-temporal-dev-key'
+    "SECRET_KEY",
+    "django-insecure-dev-key-temporal"
 )
 
-DEBUG = 'RENDER' not in os.environ
+DEBUG = "RENDER" not in os.environ
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    ".onrender.com",
+    "localhost",
+    "127.0.0.1"
+]
 
-render_external_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if render_external_hostname:
-    ALLOWED_HOSTS.append(render_external_hostname)
-
-ALLOWED_HOSTS.append('localhost')
-ALLOWED_HOSTS.append('127.0.0.1')
-
-
-# ==============================
-# APLICACIONES
-# ==============================
+# =====================================
+# APLICACIONES (¡Añadidas aplicaciones base!)
+# =====================================
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
+    'django.contrib.admin',      # Necesario para gestionar anuncios/inventario
+    'django.contrib.auth',       # Necesario para usuarios
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -39,13 +39,13 @@ INSTALLED_APPS = [
     'reportes',
 ]
 
-# ==============================
+# =====================================
 # MIDDLEWARE
-# ==============================
+# =====================================
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Para archivos estáticos en Render
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -54,104 +54,72 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'inventario_escolar.urls'
+# =====================================
+# URLS Y TEMPLATES
+# =====================================
+
+ROOT_URLCONF = "inventario_escolar.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'inventario_escolar.wsgi.application'
+WSGI_APPLICATION = "inventario_escolar.wsgi.application"
 
+# =====================================
+# BASE DE DATOS (Cambiado a PostgreSQL)
+# =====================================
 
-# ==============================
-# BASE DE DATOS (MongoDB Atlas)
-# ==============================
-
-MONGO_URI = os.environ.get('MONGO_URI')
-
-if not MONGO_URI:
-    # En desarrollo local, si no hay URI, podrías querer usar SQLite 
-    # o simplemente lanzar el error como ya lo haces:
-    raise Exception("La variable de entorno MONGO_URI no está definida")
-
+# dj_database_url configurará automáticamente la conexión usando la variable DATABASE_URL de Render
 DATABASES = {
-    'default': {
-        'ENGINE': 'django_mongodb_backend', # <--- CAMBIADO DE djongo
-        'NAME': 'inventario_escolar',
-        'CLIENT': {
-            'host': MONGO_URI,
-        },
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL', f'sqlite:///{BASE_DIR}/db.sqlite3'),
+        conn_max_age=600
+    )
 }
 
-# Añade esto para evitar errores de validación de modelos con MongoDB
-SILENCED_SYSTEM_CHECKS = ["models.W042"]
-# ==============================
-# VALIDACIÓN DE PASSWORD
-# ==============================
+# =====================================
+# CONFIGURACIÓN DE CAMPOS
+# =====================================
 
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
-]
-ALLOWED_HOSTS = [
-    ".onrender.com",
-    "localhost",
-    "127.0.0.1"
-]
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
-# ==============================
+# =====================================
 # INTERNACIONALIZACIÓN
-# ==============================
+# =====================================
 
-LANGUAGE_CODE = 'es-mx'
-TIME_ZONE = 'America/Mexico_City'
-
+LANGUAGE_CODE = "es-mx"
+TIME_ZONE = "America/Mexico_City"
 USE_I18N = True
-USE_L10N = True
 USE_TZ = True
 
-
-# ==============================
+# =====================================
 # ARCHIVOS ESTÁTICOS (Render)
-# ==============================
+# =====================================
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+# Whitenoise sirve los archivos estáticos de forma eficiente
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# =====================================
+# CONFIGURACIÓN PARA RENDER (SSL/HTTPS)
+# =====================================
 
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# ==============================
-# AUTENTICACIÓN
-# ==============================
-
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'login'
-
-
-# ==============================
-# CONFIGURACIÓN POR DEFECTO
-# ==============================
-
-# ==============================
-# CONFIGURACIÓN POR DEFECTO
-# ==============================
-
-DEFAULT_AUTO_FIELD = "django_mongodb_backend.fields.ObjectIdAutoField"
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.onrender.com",
+]
